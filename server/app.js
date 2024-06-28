@@ -4,8 +4,17 @@ const express = require("express");
 const app = express();
 
 const PORT = process.env.PORT;
+const NODE_ENV = process.env.NODE_ENV;
+
+// db
+const { connectDB } = require("./db/connectDB.js");
 
 // middlewares
+if (NODE_ENV == "development") {
+  const morgan = require("morgan");
+  app.use(morgan("dev"));
+}
+
 app.use(express.json());
 
 // Routers
@@ -14,6 +23,18 @@ const restaurantsRouter = require("./routers/restaurantsRouter.js");
 // Restful API
 app.use("/api/v1/restaurants", restaurantsRouter);
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port: ${PORT}`);
-});
+const startServer = async () => {
+  try {
+    await connectDB().then(() => {
+      console.log("Database is connected!");
+    });
+
+    app.listen(PORT, () => {
+      console.log(`Server is running on port: ${PORT}`);
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+startServer();

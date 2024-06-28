@@ -10,6 +10,12 @@ const {
   deleteRestaurant,
 } = require("../controllers/restaurantsController.js");
 
-restaurantsRouter.route("/").get(getAllRestaunrants);
+restaurantsRouter.route("/").get(getAllRestaunrants).post(createRestaurant);
+
+restaurantsRouter
+  .route("/:id")
+  .get(getRestaurantByID)
+  .put(updateRestaurant)
+  .delete(deleteRestaurant);
 
 module.exports = restaurantsRouter;
