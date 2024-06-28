@@ -7,11 +7,16 @@ Desc: Get All Restaurants
 Url: '/api/v1/restaurants'
 Access: PUBLIC
 */
-const getAllRestaunrants = async (req, res) => {
-  res.status(200).json({ msg: "Get all restaurants" });
+const getAllRestaurants = async (req, res) => {
   try {
+    const result = await clientQuery("SELECT * FROM restaurants");
+    res.status(200).json({
+      result: result.rows,
+    });
   } catch (error) {
-    console.error(error);
+    console.log(error?.message);
+    const errorMsg = error?.message || "Something went wrong!";
+    res.status(500).json(errorMsg);
   }
 };
 
@@ -23,10 +28,26 @@ Access: PUBLIC
 */
 const getRestaurantByID = async (req, res) => {
   const { id } = req.params;
-  res.status(200).json({ msg: "Get singel restaurant by ID: " + id });
+
   try {
+    const result = await clientQuery(
+      "SELECT * FROM restaurants WHERE id = $1",
+      [id]
+    );
+
+    if (!result || result.rows.length <= 0) {
+      return res.status(404).json({
+        result: "Restaurant not exists!",
+      });
+    }
+
+    res.status(200).json({
+      result: result?.rows[0],
+    });
   } catch (error) {
-    console.error(error);
+    console.log(error?.message);
+    const errorMsg = error?.message || "Something went wrong!";
+    res.status(500).json(errorMsg);
   }
 };
 
@@ -37,11 +58,22 @@ Url: '/api/v1/restaurants'
 Access: PRIVATE - AUTHENTICATE USER ONLY
 */
 const createRestaurant = async (req, res) => {
-  res.status(201).json({ msg: "Create new restaurant" });
+  const { name, location, price_range } = req.body;
+
+  if (!name || !location || !price_range) {
+    return res.status(400).json({ msg: "All values required!" });
+  }
 
   try {
+    await clientQuery(
+      "INSERT INTO restaurants (name, location, price_range) VALUES ($1, $2, $3)",
+      [name, location, price_range]
+    );
+    res.status(201).json({ msg: "New restaurant created!" });
   } catch (error) {
-    console.error(error);
+    console.log(error?.message);
+    const errorMsg = error?.message || "Something went wrong!";
+    res.status(500).json(errorMsg);
   }
 };
 
@@ -53,10 +85,26 @@ Access: PRIVATE - AUTHENTICATE USER ONLY
 */
 const updateRestaurant = async (req, res) => {
   const { id } = req.params;
-  res.status(200).json({ msg: "Update restaurant " + id });
+  const { name, location, price_range } = req.body;
+
+  if (!id) {
+    return res.status(400).json({ msg: "ID restaurant required!" });
+  }
+
+  if (!name || !location || !price_range) {
+    return res.status(400).json({ msg: "All values required!" });
+  }
+
   try {
+    await clientQuery(
+      "UPDATE restaurants SET name = $1, location = $2, price_range = $3 WHERE id=$4",
+      [name, location, price_range, id]
+    );
+    res.status(200).json({ msg: "Restaurant updated!" });
   } catch (error) {
-    console.error(error);
+    console.log(error?.message);
+    const errorMsg = error?.message || "Something went wrong!";
+    res.status(500).json(errorMsg);
   }
 };
 
@@ -68,16 +116,23 @@ Access: PRIVATE - AUTHENTICATE USER ONLY
 */
 const deleteRestaurant = async (req, res) => {
   const { id } = req.params;
-  res.status(200).json({ msg: "Delete restaurant: " + id });
+
+  if (!id) {
+    return res.status(400).json({ msg: "ID restaurant required!" });
+  }
 
   try {
+    await clientQuery("DELETE FROM restaurants WHERE id=$1", [id]);
+    res.status(200).json({ msg: "Restaurant deleted!" });
   } catch (error) {
-    console.error(error);
+    console.log(error?.message);
+    const errorMsg = error?.message || "Something went wrong!";
+    res.status(500).json(errorMsg);
   }
 };
 
 module.exports = {
-  getAllRestaunrants,
+  getAllRestaurants,
   getRestaurantByID,
   createRestaurant,
   updateRestaurant,

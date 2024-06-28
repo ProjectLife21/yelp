@@ -3,14 +3,14 @@ const restaurantsRouter = express.Router();
 
 // controllers
 const {
-  getAllRestaunrants,
+  getAllRestaurants,
   getRestaurantByID,
   createRestaurant,
   updateRestaurant,
   deleteRestaurant,
 } = require("../controllers/restaurantsController.js");
 
-restaurantsRouter.route("/").get(getAllRestaunrants).post(createRestaurant);
+restaurantsRouter.route("/").get(getAllRestaurants).post(createRestaurant);
 
 restaurantsRouter
   .route("/:id")
