@@ -3,6 +3,9 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 // Pages
 import { HomePage, RestaurantDetailPage, UpdateRestaurantPage } from "./pages";
 
+// App Context
+import { RestaurantContextProvider } from "./context/appContext";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -19,5 +22,9 @@ const router = createBrowserRouter([
 ]);
 
 export default function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <RestaurantContextProvider>
+      <RouterProvider router={router} />
+    </RestaurantContextProvider>
+  );
 }
