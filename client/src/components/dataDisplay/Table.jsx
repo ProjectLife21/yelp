@@ -1,9 +1,16 @@
 import Button from "../actions/Button";
 import ALink from "../navigation/ALink";
 import { useFetch } from "../../customHooks/useFetch";
+import { getAllRestaurantsURL } from "../../API/restaurantsAPI";
+import { useEffect } from "react";
 
 const Table = () => {
-  const { isLoading, error, data } = useFetch("/restaurants");
+  const { isLoading, error, data, fetchData } = useFetch();
+  console.log("Table wywołanie");
+
+  useEffect(() => {
+    fetchData(getAllRestaurantsURL());
+  }, []);
 
   if (isLoading) {
     return <h1>Loading...</h1>;
@@ -34,7 +41,7 @@ const Table = () => {
               <tr key={id}>
                 <td>{name}</td>
                 <td>{location}</td>
-                <td>{price_range}</td>
+                <td>{"$".repeat(price_range)}</td>
                 <td>{price_range}</td>
                 <td>
                   <ALink

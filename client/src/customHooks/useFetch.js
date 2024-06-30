@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { axiosInstance } from "../API/axiosInstance";
 
-export const useFetch = (url) => {
+export const useFetch = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState({
     isError: false,
@@ -9,7 +9,8 @@ export const useFetch = (url) => {
   });
   const [data, setData] = useState(null);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async (url) => {
+    console.log("Wywołanie");
     setIsLoading(true);
     try {
       const response = await axiosInstance(url);
@@ -23,11 +24,11 @@ export const useFetch = (url) => {
       });
     }
     setIsLoading(false);
-  };
+  }, []);
 
   useEffect(() => {
     fetchData();
-  }, [url]);
+  }, [fetchData]);
 
-  return { isLoading, error, data };
+  return { isLoading, error, data, fetchData };
 };
