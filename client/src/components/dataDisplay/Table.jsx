@@ -1,8 +1,18 @@
-import { restaurantData } from "../../utils/tempData";
 import Button from "../actions/Button";
 import ALink from "../navigation/ALink";
+import { useFetch } from "../../customHooks/useFetch";
 
 const Table = () => {
+  const { isLoading, error, data } = useFetch("/restaurants");
+
+  if (isLoading) {
+    return <h1>Loading...</h1>;
+  }
+
+  if (error.isError) {
+    return <h1>{error?.errorMsg}</h1>;
+  }
+
   return (
     <div className="mt-5 overflow-x-auto">
       <table className="table">
@@ -18,7 +28,7 @@ const Table = () => {
           </tr>
         </thead>
         <tbody>
-          {restaurantData.map((item) => {
+          {data?.map((item) => {
             const { id, name, location, price_range } = item;
             return (
               <tr key={id}>
@@ -44,24 +54,6 @@ const Table = () => {
               </tr>
             );
           })}
-          {/* row 1 */}
-          {/* <tr>
-            <td>Cy Ganderton</td>
-            <td>Quality Control Specialist</td>
-            <td>Blue</td>
-          </tr> */}
-          {/* row 2 */}
-          {/* <tr>
-            <td>Hart Hagerty</td>
-            <td>Desktop Support Technician</td>
-            <td>Purple</td>
-          </tr> */}
-          {/* row 3 */}
-          {/* <tr>
-            <td>Brice Swyre</td>
-            <td>Tax Accountant</td>
-            <td>Red</td>
-          </tr> */}
         </tbody>
       </table>
     </div>

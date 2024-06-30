@@ -2,6 +2,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 const express = require("express");
 const app = express();
+const cors = require("cors");
 
 const PORT = process.env.PORT || 5000;
 const NODE_ENV = process.env.NODE_ENV;
@@ -15,6 +16,7 @@ if (NODE_ENV == "development") {
   app.use(morgan("dev"));
 }
 
+app.use(cors());
 app.use(express.json());
 
 // Routers
